@@ -6,8 +6,8 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Initialise pico_sdk from installed location
-# (note this can come from environment, CMake cache etc)
+# Initialise pico_sdk from the installed location
+# (note this can come from the environment, CMake cache etc)
 
 # == DO NEVER EDIT THE NEXT LINES for Raspberry Pi Pico VS Code Extension to work ==
 if(WIN32)
@@ -59,7 +59,9 @@ pico_enable_stdio_usb(Hand_bell 1)
 
 # Add the standard library to the build
 target_link_libraries(Hand_bell
-        pico_stdlib)
+        pico_stdlib
+        hardware_pwm
+        pico_multicore)
 
 # Add the standard include files to the build
 target_include_directories(Hand_bell PRIVATE
