@@ -50,14 +50,46 @@ void servo_down(uint slice_num, uint delay_val) {
     }
 }
 
+/* */
+bool send_to_core_1(int32_t data) {
+    // VER 1.
+    // Send data to Core 1
+    // multicore_fifo_push_blocking(data);
+
+    // VER 2.
+    printf("Core 0 sending: %d\n", data);
+    // Non-blocking push
+    bool success = multicore_fifo_push_timeout_us(data, 0);
+
+    if (!success) {
+        return false;
+        printf("Core 0: FIFO is full. Could not send %d\n", data);
+    }
+
+    return true;
+}
+
 
 /**********************************************************************/
 // Function to be run on Core 1
-void core1_entry() {
+void core_1_entry() {
     while (true) {
+        /*
+        // VER 1.
         // Get data from Core 0
         int32_t data_from_core0 = multicore_fifo_pop_blocking();
         printf("Core 1 received: %d\n", data_from_core0);
+        */
+
+        // VER 2.
+        int32_t data_from_core_0;
+        // Non-blocking pop
+        bool success = multicore_fifo_pop_timeout_us(0, &data_from_core_0);
+        if (success) {
+            printf("Core 1 received: %d\n", data_from_core0);
+        } else {
+            // printf("Core 1: No data received.\n");
+        }
 
         printf("Tauno Hand Bell\n");
         sleep_ms(500);
@@ -84,7 +116,7 @@ int main() {
     int counter = 0;
 
     // Launch core1_entry() on Core 1
-    multicore_launch_core1(core1_entry);
+    multicore_launch_core1(core_1_entry);
 
     while (true) {
         sleep_ms(5000);
@@ -92,8 +124,9 @@ int main() {
         sleep_ms(5000);
         servo_down(slice_num, 50);
 
-        // Send data to Core 1
-        multicore_fifo_push_blocking(counter);
+        send_to_core_1(counter);
+
+        sleep_ms(500);  // Sleep for 0.5 second
 
         counter++;
     }
