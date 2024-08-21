@@ -8,8 +8,8 @@
   </head>
   <body>
     <h1>Bell</h1>
-     <button id="onButton">Turn ON</button>
-    <button id="offButton">Turn OFF</button>
+     <button id="onButton">Bell ON</button>
+     <button id="offButton">Turn OFF</button>
     <script>
     // Replace with your actual Blynk Auth Token and Virtual Pin
 const authToken = "MdlHJUkkWEBwuTIjYy4yQd6dY_Krrp5m";
@@ -23,7 +23,7 @@ function sendBlynkRequest(value) {
     fetch(url)
         .then(response => {
                     if (response.ok) {
-                        alert(`Virtual Pin ${virtualPin} set to ${value}`);
+                        //alert(`Virtual Pin ${virtualPin} set to ${value}`);
                     } else {
                         alert("Failed to send request to Blynk");
                     }
