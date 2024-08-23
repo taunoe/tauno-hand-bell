@@ -47,6 +47,7 @@ button#onButton:active{
 }
 
 div#youtube {
+        margin: auto;
         width: 100%;
         min-width: 400px;
         max-width: 800px;
