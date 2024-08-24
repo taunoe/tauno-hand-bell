@@ -53,10 +53,11 @@ div#youtube {
 
 #offlineBanner {
         display: none;
-        padding: 10px;
+        padding: 20px;
         background-color: red;
         color: white;
         text-align: center;
+        font-size: 18px;
     }
         
         
