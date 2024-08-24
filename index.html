@@ -9,49 +9,74 @@
   </head>
   <body>
     <h1>Ring The Tauno Bell!</h1>
-     <button id="onButton">Press Me</button>
-     <!--<button id="offButton">Turn OFF</button>//-->
+      <div id="offlineBanner">Bell is currently <b>offline!</b><br/> Come back later.</div>
+      <button id="onButton">Press Me</button>
+      <!--<button id="offButton">Turn OFF</button>//-->
       <p>and wait (video delay about 4 seconds).</p>
-    <div id="youtube">
-      <div style="position: relative; width: 100%; overflow: hidden; padding-top: 56.25%;">
-      <p>
-      <iframe style="position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 100%; border: none;" width="560" height="315" src="https://www.youtube.com/embed/cVQlMFGOp3o?si=KjAVFU9WW8e4hhe9" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-      </p>
+      <div id="youtube">
+        <div style="position: relative; width: 100%; overflow: hidden; padding-top: 56.25%;">
+          <p>
+            <iframe style="position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 100%; border: none;" width="560" height="315" src="https://www.youtube.com/embed/cVQlMFGOp3o?si=KjAVFU9WW8e4hhe9" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </p>
         </div>
-    </div>
+      </div>
     
     <script>
-    // Replace with your actual Blynk Auth Token and Virtual Pin
-const authToken = "MdlHJUkkWEBwuTIjYy4yQd6dY_Krrp5m";
-const virtualPin = "V0";  // Replace with the actual virtual pin number
+      const authToken = "MdlHJUkkWEBwuTIjYy4yQd6dY_Krrp5m";
+      const virtualPin = "V0";  
 
-const baseUrl = `https://blynk.cloud/external/api/update?token=${authToken}&${virtualPin}`;
+      const baseUrl = `https://blynk.cloud/external/api/update?token=${authToken}&${virtualPin}`;
+      
+      // Function to check if the device is online
+      function checkDeviceStatus() {
+        const url = `https://blynk.cloud/external/api/isHardwareConnected?token=${authToken}`;
+        fetch(url)
+          .then(response => response.text())
+          .then(status => {
+            if (status === "true") {
+              console.log("Bell is online");
+              document.getElementById("offlineBanner").style.display = "none";
+            } else {
+              console.log("Bell is offline");
+              document.getElementById("offlineBanner").style.display = "block";
+            }
+          })
+          .catch(error => {
+            console.error("Error:", error);
+            document.getElementById("offlineBanner").style.display = "block";
+        });
+      }
 
-// Function to send a request to Blynk
-function sendBlynkRequest(value) {
-    const url = `${baseUrl}=${value}`;
-    fetch(url)
-        .then(response => {
+      // Function to send a request to Blynk
+      function sendBlynkRequest(value) {
+        const url = `${baseUrl}=${value}`;
+          fetch(url)
+            .then(response => {
                     if (response.ok) {
                         //alert(`Virtual Pin ${virtualPin} set to ${value}`);
                     } else {
                         alert("Failed to send request to Blynk");
                     }
-        })
-        .catch(error => {
-            alert("Error: " + error);
-        });
-}
+            })
+            .catch(error => {
+              alert("Error: " + error);
+          });
+      }
 
-// Event listeners for buttons
-document.getElementById("onButton").onclick = function() {
-    sendBlynkRequest(1);  // Send 1 to turn ON the virtual pin
-};
+      // Event listeners for buttons
+      document.getElementById("onButton").onclick = function() {
+        sendBlynkRequest(1);  // Send 1 to turn ON the virtual pin
+      };
 
-document.getElementById("offButton").onclick = function() {
-    sendBlynkRequest(0);  // Send 0 to turn OFF the virtual pin
-};
+      document.getElementById("offButton").onclick = function() {
+        sendBlynkRequest(0);  // Send 0 to turn OFF the virtual pin
+      };
+      
+      // Check the device status when the page loads
+      checkDeviceStatus();
 
+      // Optionally, you can check the status periodically
+      setInterval(checkDeviceStatus, 10000); // Check every 10 seconds
     </script>
   </body>
 </html>

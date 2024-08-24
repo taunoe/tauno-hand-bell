@@ -49,14 +49,14 @@ void servo_up() {
   for (pos = 0; pos <= 180; pos += 1) {
     // in steps of 1 degree
     myservo.write(pos);
-    delay(5);
+    delay(2);
   }
 }
 
 void servo_down() {
   for (pos = 180; pos >= 0; pos -= 1) {
     myservo.write(pos);
-    delay(5);
+    delay(2);
   }
 }
 
