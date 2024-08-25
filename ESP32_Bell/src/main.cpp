@@ -91,12 +91,48 @@ void myTimerEvent() {
 
 
 ////////////////////////////////////////////////////////////
+// https://community.blynk.cc/t/how-i-can-use-multiple-wifi-network/31667/15
+char* SSIDs[] = {SSID_1, SSID_2};  // list a wifi networks
+char* PASSs[] = {PASS_1, PASS_2};  // list a passwords
+
+void MultyWiFiBlynkBegin() {
+  int ssid_count = 0;
+  int ssid_mas_size = sizeof(SSIDs) / sizeof(SSIDs[0]);
+
+  do {
+    Serial.println("Connect to wi-fi " + String(SSIDs[ssid_count]));
+    WiFi.begin(SSIDs[ssid_count], PASSs[ssid_count]);
+    int WiFi_timeout_count = 0;
+
+    while (WiFi.status() != WL_CONNECTED && WiFi_timeout_count < 50) {
+      delay(200);
+      Serial.print(".");
+      ++WiFi_timeout_count;
+    }
+
+    if (WiFi.status() == WL_CONNECTED) {
+      Serial.println("Connected to WiFi!");
+      Blynk.config(BLYNK_AUTH_TOKEN);
+      Blynk.connect(5000);  // waiting 5 sec
+    }
+    ++ssid_count;
+  } while (!Blynk.connected() && ssid_count < ssid_mas_size);
+
+  if (!Blynk.connected() && ssid_count == ssid_mas_size) {
+    Serial.println("Could not connect to blynk");
+  }
+}
+
+
+////////////////////////////////////////////////////////////
 
 
 void setup() {
   Serial.begin(115200);
 
-  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+  MultyWiFiBlynkBegin();
+
+  // Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
   // You can also specify server:
   // Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass, "blynk.cloud", 80);
   // Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass, IPAddress(192,168,1,100), 8080);
@@ -124,5 +160,4 @@ void loop() {
   // You can inject your own code or combine it with other sketches.
   // Check other examples on how to communicate with Blynk. Remember
   // to avoid delay() function!
-
 }
