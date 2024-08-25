@@ -2,26 +2,20 @@
  Copyright 2024 Tauno Erik
 
  By Tauno Erik
- Modified 19.08.2024
+ Modified 25.08.2024
 */
 #include <Arduino.h>
 #include <ESP32Servo.h>  // https://github.com/madhephaestus/ESP32Servo
-// #include <Blynk.h>       // https://registry.platformio.org/libraries/blynkkk/Blynk/installation
 
-// Blynk Device Info:
-#define BLYNK_TEMPLATE_ID   "TMPL4ugGDBPFA"
-#define BLYNK_TEMPLATE_NAME "Hand Bell"
-#define BLYNK_AUTH_TOKEN    "MdlHJUkkWEBwuTIjYy4yQd6dY_Krrp5m"
+#include "secret.h"  // Wifi ssid & pass
 // Comment this out to disable prints and save space
 #define BLYNK_PRINT Serial
 
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <BlynkSimpleEsp32.h>
-#include "secret.h"  // Wifi ssid & pass
 
 BlynkTimer blynk_timer;
-
 
 // Servo
 const int SERVO_PIN = 27;
@@ -78,7 +72,6 @@ BLYNK_WRITE(V0) {
     servo_down();
     Blynk.virtualWrite(V1, 0);
   }
-
 }
 
 // This function is called every time the device is connected to the Blynk.Cloud

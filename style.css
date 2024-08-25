@@ -1,3 +1,9 @@
+/*
+ * Remote controlled deskbell!
+ * style.css
+ * Tauno Erik
+ * 25.08.2024
+ */
 body {
         font-family: Arial, sans-serif;
         margin: 0;
@@ -62,22 +68,22 @@ div#youtube {
     }
 
 footer {
-            background-color: #333; /* Dark background */
-            color: white;           /* White text color */
-            padding: 0;          /* Space inside the footer */
-            text-align: center;     /* Centered text */
-            position: fixed;        /* Sticks footer to the bottom */
-            width: 100%;            /* Full width footer */
-            bottom: 0;              /* Stick it to the bottom */
+        background-color: #333;
+        color: white;
+        padding: 0;
+        text-align: center;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
         }
 
 footer a {
-            color: #f4f4e4;         /* #FFD700; Gold color for links */
-            text-decoration: none;  /* Remove underline */
+        color: #f4f4e4;
+        text-decoration: none;
         }
 
 footer a:hover {
-            text-decoration: underline; /* Underline on hover */
+        text-decoration: underline;
         }
         
 

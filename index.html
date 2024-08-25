@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Helista Tauno kellukest!</title>
+    <title>Helista Tauno kella!</title>
     
-    <meta property="og:title" content="Helista Tauno kellukest!">
-    <meta property="og:description" content="Tauno laual on kelluke. Selle helistamiseks vajutage nuppu.">
+    <meta property="og:title" content="Helista Tauno kella!">
+    <meta property="og:description" content="Tauno laual on kell. Selle helistamiseks vajuta nuppu.">
     <meta property="og:image" content="https://raw.githubusercontent.com/taunoe/tauno-hand-bell/main/thumb.jpg">
     <meta property="og:url" content="https://taunoe.github.io/tauno-hand-bell/index.html">
     <meta property="og:type" content="website">
@@ -16,7 +16,7 @@
   </head>
   <body>
     <h1>Helista kellukest!</h1>
-      <div id="offlineBanner">Kelluke on hetkel võrgust väljas!<br/> Tule hiljem tagasi.</div>
+      <div id="offlineBanner">Kell on hetkel <b>võrgust väljas</b>!<br/> Tule hiljem tagasi.</div>
       <button id="onButton">Vajuta siia</button>
       
       <p>ja oota (video viivitus umbes 4 sekundit).</p>
@@ -68,11 +68,12 @@
         const url = `${baseUrl}=${value}`;
           fetch(url)
             .then(response => {
-                    if (response.ok) {
-                        //alert(`Virtual Pin ${virtualPin} set to ${value}`);
-                    } else {
-                        alert("Failed to send request to Blynk");
-                    }
+              if (response.ok) {
+                // Kõik töötab!
+                // alert(`Virtual Pin ${virtualPin} set to ${value}`);
+              } else {
+                alert("Failed to send request to Blynk");
+              }
             })
             .catch(error => {
               alert("Error: " + error);
@@ -91,8 +92,8 @@
       // Check the device status when the page loads
       checkDeviceStatus();
 
-      // Optionally, you can check the status periodically
-      setInterval(checkDeviceStatus, 10000); // Check every 10 seconds
+      // Check the status periodically
+      setInterval(checkDeviceStatus, 10000); // Every 10 seconds
     </script>
   </body>
 </html>
