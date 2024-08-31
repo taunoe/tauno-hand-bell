@@ -2,7 +2,7 @@
  Copyright 2024 Tauno Erik
 
  By Tauno Erik
- Modified 25.08.2024
+ Modified 31.08.2024
 */
 #include <Arduino.h>
 #include <ESP32Servo.h>  // https://github.com/madhephaestus/ESP32Servo
@@ -18,12 +18,12 @@
 BlynkTimer blynk_timer;
 
 // Servo
-const int SERVO_PIN = 27;
+const int SERVO_PIN = 18;
+const int SERVO_DELAY = 2;
+const int SERVO_MIN = 500;
+const int SERVO_MAX = 2400;
 Servo myservo;
 
-// 16 servo objects can be created on the ESP32
-
-int pos = 0;    // variable to store the servo position
 // Recommended PWM GPIO pins on the ESP32 include 2,4,12-19,21-23,25-27,32-33
 // Possible PWM GPIO pins on the ESP32-S2:
 //   0(used by on-board button),1-17,18(used by on-board LED),19-21,26,33-42
@@ -31,30 +31,26 @@ int pos = 0;    // variable to store the servo position
 //    0(used by on-board button),1-21,35-45,47,48(used by on-board LED)
 // Possible PWM GPIO pins on the ESP32-C3:
 //    0(used by on-board button),1-7,8(used by on-board LED),9-10,18-21
-#if defined(CONFIG_IDF_TARGET_ESP32S2) || defined(CONFIG_IDF_TARGET_ESP32S3)
-int servoPin = 17;
-#elif defined(CONFIG_IDF_TARGET_ESP32C3)
-int servoPin = 7;
-#else
-int servoPin = 18;
-#endif
 
-void servo_up() {
-  for (pos = 0; pos <= 180; pos += 1) {
-    // in steps of 1 degree
+/*
+ Move servo to +180 position
+*/
+void servo_move_plus(int delay_val) {
+  for (int pos = 0; pos <= 180; pos += 1) {
     myservo.write(pos);
-    delay(2);
+    delay(delay_val);
   }
 }
 
-void servo_down() {
-  for (pos = 180; pos >= 0; pos -= 1) {
+/*
+ Move servo to 0 position.
+*/
+void servo_move_minus(int delay_val) {
+  for (int pos = 180; pos >= 0; pos -= 1) {
     myservo.write(pos);
-    delay(2);
+    delay(delay_val);
   }
 }
-
-
 
 // This function is called every time the Virtual Pin 0 state changes
 BLYNK_WRITE(V0) {
@@ -66,11 +62,20 @@ BLYNK_WRITE(V0) {
   // Update state
   Blynk.virtualWrite(V1, value);
 
+  // If is a button signal
   if (value == 1) {
-    servo_up();
+    if (!myservo.attached()) {
+      myservo.setPeriodHertz(50);  // standard 50 hz servo
+      myservo.attach(SERVO_PIN, SERVO_MIN, SERVO_MAX);
+    }
+
+    servo_move_plus(SERVO_DELAY);
+
     Blynk.virtualWrite(V0, 0);
-    servo_down();
-    Blynk.virtualWrite(V1, 0);
+    servo_move_minus(SERVO_DELAY);
+
+    Blynk.virtualWrite(V1, 0);  // Write V1 pin to 0
+    myservo.detach();  // Turn the servo off
   }
 }
 
@@ -100,7 +105,7 @@ void MultyWiFiBlynkBegin() {
   int ssid_mas_size = sizeof(SSIDs) / sizeof(SSIDs[0]);
 
   do {
-    Serial.println("Connect to wi-fi " + String(SSIDs[ssid_count]));
+    Serial.println("\nConnect to wi-fi " + String(SSIDs[ssid_count]));
     WiFi.begin(SSIDs[ssid_count], PASSs[ssid_count]);
     int WiFi_timeout_count = 0;
 
@@ -130,6 +135,8 @@ void MultyWiFiBlynkBegin() {
 void setup() {
   Serial.begin(115200);
 
+  delay(500);
+  Serial.println("\nSetup!");
   MultyWiFiBlynkBegin();
 
   // Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
@@ -147,8 +154,9 @@ void setup() {
   ESP32PWM::allocateTimer(1);
   ESP32PWM::allocateTimer(2);
   ESP32PWM::allocateTimer(3);
-  myservo.setPeriodHertz(50);    // standard 50 hz servo
-  myservo.attach(servoPin, 500, 2500);  // 1000, 2000
+  // myservo.setPeriodHertz(50);    // standard 50 hz servo
+  // myservo.attach(SERVO_PIN, SERVO_MIN, SERVO_MAX);  // 1000, 2000 // 500, 2500
+  
   // using default min/max of 1000us and 2000us
   // different servos may require different min/max settings
   // for an accurate 0 to 180 sweep
