@@ -1,19 +1,27 @@
-import cv2
+import cv2 
 import requests
 import time
+from threading import Timer
+
 
 # Load the pre-trained Haar Cascade for face detection from OpenCV
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 # Start capturing video from the webcam
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 # Blynk API URL
-auth_token = "MdlHJUkkWEBwuTIjYy4yQd6dY_Krrp5m"  # Replace with your Blynk Auth Token
-pin = "V1"  # Replace with the virtual pin you want to trigger
-url = f"http://blynk-cloud.com/{auth_token}/update/{pin}?value=1"
+auth_token = "MdlHJUkkWEBwuTIjYy4yQd6dY_Krrp5m"
+pin = "V0"
+region = "fra1"
+url = f"https://{region}.blynk.cloud/external/api/update?token={auth_token}&{pin}=1"
+
 
 request_sent = False
+
+def reset_request_flag():
+    global request_sent
+    request_sent = False
 
 while True:
     # Capture frame-by-frame
@@ -23,13 +31,17 @@ while True:
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     # Detect faces in the frame
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+    faces = face_cascade.detectMultiScale(gray,
+                                          scaleFactor=1.1,
+                                          minNeighbors=5,
+                                          minSize=(80, 80))
 
     # If a face is detected and the request hasn't been sent yet, send the GET request to Blynk API
     if len(faces) > 0 and not request_sent:
         requests.get(url)
         request_sent = True
-        time.sleep(5)  # Prevent sending multiple requests too quickly
+        print("request_sent")
+        Timer(2, reset_request_flag).start()
 
     # Draw rectangles around detected faces
     for (x, y, w, h) in faces:
